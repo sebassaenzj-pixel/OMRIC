@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMRIC — Observatorio de Mercenarismo y Reclutamiento Internacional de Colombianos</title>
+<meta name="description" content="El OMRIC investiga, documenta y analiza el fenómeno del mercenarismo colombiano para incidir en política pública y proteger los derechos de los ciudadanos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   VARIABLES & RESET
+═══════════════════════════════════════════════════════════════ */
+:root {
+  --navy:      #0D1F3C;
+  --navy2:     #162B4F;
+  --navy3:     #0A1829;
+  --crimson:   #C0392B;
+  --crimson2:  #A93226;
+  --gold:      #D4A017;
+  --gold2:     #B8891A;
+  --slate:     #2C3E50;
+  --slate2:    #3D5166;
+  --smoke:     #F2F5F8;
+  --smoke2:    #E8EDF3;
+  --white:     #FFFFFF;
+  --black:     #111111;
+  --grey:      #6B7D8F;
+  --lightgrey: #A8B8C8;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'DM Mono', monospace;
+
+  --radius:   4px;
+  --radius-lg: 8px;
+  --shadow:   0 2px 12px rgba(13,31,60,0.10);
+  --shadow-lg:0 8px 40px rgba(13,31,60,0.18);
+  --trans:    all 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--black);
+  background: var(--smoke);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; text-decoration: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--navy3); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════════════════════════ */
+.container {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: var(--grey);
+  line-height: 1.7;
+  max-width: 600px;
+  font-weight: 300;
+}
+
+.gold-rule {
+  width: 48px;
+  height: 3px;
+  background: var(--gold);
+  margin: 20px 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--trans);
+  border: none;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--navy);
+}
+.btn-primary:hover {
+  background: var(--gold2);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(212,160,23,0.35);
+}
+
+.btn-outline-white {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.45);
+}
+.btn-outline-white:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-crimson {
+  background: var(--crimson);
+  color: var(--white);
+}
+.btn-crimson:hover {
+  background: var(--crimson2);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(192,57,43,0.30);
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════════════════════ */
+#topbar {
+  background: var(--crimson);
+  padding: 7px 0;
+  text-align: center;
+  font-size: 0.74rem;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  position: relative;
+  z-index: 200;
+}
+#topbar a {
+  color: var(--white);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.topbar-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  margin: 0 10px;
+  vertical-align: middle;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(0.7); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════════════════ */
+#nav {
+  position: fixed;
+  top: 0;
+  left: 0; right: 0;
+  z-index: 100;
+  padding: 0;
+  transition: var(--trans);
+  background: transparent;
+}
+#nav.scrolled {
+  background: rgba(13,31,60,0.97);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nav-logo-mark {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.nav-brand-text strong {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--white);
+  letter-spacing: 0.06em;
+}
+.nav-brand-text span {
+  display: block;
+  font-size: 0.64rem;
+  color: var(--gold);
+  letter-spacing: 0.09em;
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.78);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  transition: var(--trans);
+  letter-spacing: 0.02em;
+}
+.nav-links a:hover {
+  color: var(--gold);
+  background: rgba(255,255,255,0.06);
+}
+.nav-cta {
+  background: var(--crimson) !important;
+  color: var(--white) !important;
+  padding: 7px 16px !important;
+  border-radius: var(--radius) !important;
+}
+.nav-cta:hover {
+  background: var(--crimson2) !important;
+}
+
+/* Hamburger */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: var(--trans);
+}
+.nav-mobile {
+  display: none;
+  background: var(--navy3);
+  padding: 16px 24px 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.nav-mobile a {
+  display: block;
+  color: rgba(255,255,255,0.82);
+  padding: 10px 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: var(--trans);
+}
+.nav-mobile a:hover { color: var(--gold); }
+.nav-mobile.open { display: block; }
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  background: var(--navy3);
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Diagonal geometric background */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 70%;
+  height: 140%;
+  background: linear-gradient(135deg, var(--navy2) 0%, transparent 60%);
+  clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(212,160,23,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,160,23,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* Floating accent lines */
+.hero-accent-line {
+  position: absolute;
+  background: var(--gold);
+  opacity: 0.12;
+}
+.hal-1 { width: 1px; height: 60%; top: 20%; right: 28%; }
+.hal-2 { width: 40%; height: 1px; bottom: 28%; left: 0; }
+.hal-3 { width: 1px; height: 30%; top: 0; right: 38%; opacity: 0.06; }
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 120px 32px 80px;
+  max-width: 1160px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.hero-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(212,160,23,0.35);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+.hero-eyebrow-line {
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.hero-title-accent {
+  color: var(--gold);
+}
+
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 400;
+  margin-bottom: 28px;
+  max-width: 520px;
+}
+
+.hero-tagline {
+  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+  color: rgba(255,255,255,0.85);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.5;
+  margin-bottom: 40px;
+  max-width: 520px;
+}
+.hero-tagline em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 64px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.hero-stat-item {}
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--white);
+  display: block;
+  line-height: 1;
+}
+.hero-stat-num span { color: var(--gold); }
+.hero-stat-label {
+  font-size: 0.74rem;
+  color: var(--lightgrey);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Hero scroll indicator */
+.hero-scroll {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.3);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.hero-scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(212,160,23,0.5), transparent);
+  animation: scroll-line 2s ease-in-out infinite;
+}
+@keyframes scroll-line {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  50%  { transform: scaleY(1); transform-origin: top; }
+  51%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTEXT BAND
+═══════════════════════════════════════════════════════════════ */
+#context {
+  background: var(--navy);
+  padding: 80px 0;
+}
+.context-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.context-left .section-title { color: var(--white); }
+.context-left .section-subtitle { color: rgba(255,255,255,0.55); max-width: 440px; }
+
+.context-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.cstat {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  padding: 28px 24px;
+  transition: var(--trans);
+}
+.cstat:hover {
+  background: rgba(212,160,23,0.06);
+  border-color: rgba(212,160,23,0.25);
+}
+.cstat-num {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold);
+  display: block;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.cstat-label {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+  font-weight: 300;
+  line-height: 1.5;
+}
+.cstat-icon {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  display: block;
+  opacity: 0.7;
+}
+
+.context-countries {
+  margin-top: 4px;
+  background: rgba(192,57,43,0.1);
+  border: 1px solid rgba(192,57,43,0.2);
+  padding: 20px 24px;
+}
+.context-countries-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  margin-bottom: 8px;
+  display: block;
+}
+.country-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ctag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.65);
+  background: rgba(255,255,255,0.05);
+  padding: 3px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   WHAT IS OMRIC
+═══════════════════════════════════════════════════════════════ */
+#about {
+  background: var(--white);
+  padding: 96px 0;
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.about-left {}
+.about-right {
+  padding-top: 12px;
+}
+
+.about-pillars {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.pillar {
+  display: flex;
+  gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--smoke2);
+  transition: var(--trans);
+}
+.pillar:first-child { padding-top: 0; }
+.pillar:last-child { border-bottom: none; }
+.pillar:hover .pillar-icon { background: var(--navy); color: var(--gold); }
+
+.pillar-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--smoke);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  border-radius: var(--radius);
+  transition: var(--trans);
+  color: var(--navy);
+}
+.pillar-text strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.pillar-text p {
+  font-size: 0.85rem;
+  color: var(--grey);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.about-mission {
+  background: var(--navy);
+  padding: 36px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.about-mission::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  right: 16px;
+  font-family: var(--font-display);
+  font-size: 8rem;
+  color: rgba(212,160,23,0.08);
+  line-height: 1;
+}
+.about-mission-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 14px;
+}
+.about-mission p {
+  font-size: 0.93rem;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.75;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.about-vision {
+  background: var(--smoke);
+  padding: 28px 36px;
+  border-left: 3px solid var(--gold);
+}
+.about-vision-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--slate);
+  display: block;
+  margin-bottom: 10px;
+}
+.about-vision p {
+  font-size: 0.88rem;
+  color: var(--slate);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   WORK LINES
+═══════════════════════════════════════════════════════════════ */
+#lines {
+  background: var(--smoke);
+  padding: 96px 0;
+}
+.lines-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.lines-header .section-subtitle { margin: 0 auto; }
+
+.lines-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.line-card {
+  background: var(--white);
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--trans);
+  cursor: default;
+}
+.line-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.line-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+.line-card:hover::before { transform: scaleX(1); }
+.line-card:hover .lc-icon { background: var(--navy); color: var(--gold); }
+
+.lc-num {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--lightgrey);
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+  display: block;
+}
+.lc-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--smoke);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  border-radius: var(--radius);
+  transition: var(--trans);
+  color: var(--navy);
+}
+.lc-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+.lc-desc {
+  font-size: 0.84rem;
+  color: var(--grey);
+  line-height: 1.7;
+  font-weight: 300;
+}
+.lc-tag {
+  display: inline-block;
+  margin-top: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  color: var(--gold2);
+  background: rgba(212,160,23,0.08);
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+
+/* Extra card spanning */
+.line-card.wide {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.line-card.wide .lc-content {}
+.line-card.wide .lc-products {
+  padding-top: 4px;
+}
+.lc-product-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--smoke2);
+  font-size: 0.82rem;
+  color: var(--grey);
+  line-height: 1.5;
+}
+.lc-product-item:last-child { border-bottom: none; }
+.lc-product-item::before {
+  content: '▸';
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: 0.7rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PUBLICATIONS
+═══════════════════════════════════════════════════════════════ */
+#publications {
+  background: var(--white);
+  padding: 96px 0;
+}
+.pub-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 48px;
+  gap: 24px;
+}
+.pub-filters {
+  display: flex;
+  gap: 4px;
+}
+.pub-filter {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: var(--trans);
+  border: 1px solid var(--smoke2);
+  background: var(--white);
+  color: var(--grey);
+}
+.pub-filter.active,
+.pub-filter:hover {
+  background: var(--navy);
+  color: var(--gold);
+  border-color: var(--navy);
+}
+
+.pub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.pub-card {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--smoke2);
+  overflow: hidden;
+  transition: var(--trans);
+  cursor: pointer;
+}
+.pub-card:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+.pub-card-stripe {
+  width: 4px;
+  flex-shrink: 0;
+}
+.pub-card-body { padding: 24px 24px; flex: 1; }
+.pub-type-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--white);
+  padding: 2px 7px;
+  border-radius: 2px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.pub-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.pub-meta {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--lightgrey);
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+.pub-excerpt {
+  font-size: 0.82rem;
+  color: var(--grey);
+  line-height: 1.65;
+  font-weight: 300;
+}
+.pub-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: var(--trans);
+}
+.pub-link:hover { color: var(--gold); }
+.pub-link::after { content: '→'; transition: transform 0.2s; }
+.pub-link:hover::after { transform: translateX(4px); }
+
+/* Featured pub */
+.pub-card.featured {
+  grid-column: span 2;
+  flex-direction: row;
+  background: var(--navy);
+  border-color: transparent;
+}
+.pub-card.featured .pub-card-body { padding: 36px; }
+.pub-card.featured .pub-title { color: var(--white); font-size: 1.1rem; }
+.pub-card.featured .pub-meta { color: rgba(255,255,255,0.35); }
+.pub-card.featured .pub-excerpt { color: rgba(255,255,255,0.6); }
+.pub-card.featured .pub-link { color: var(--gold); }
+.pub-card.featured .pub-link:hover { color: var(--white); }
+.pub-card.featured:hover { transform: none; border-color: var(--gold); }
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA SECTION
+═══════════════════════════════════════════════════════════════ */
+#data {
+  background: var(--navy3);
+  padding: 96px 0;
+}
+#data .section-title { color: var(--white); }
+#data .section-subtitle { color: rgba(255,255,255,0.45); }
+
+.data-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  margin-top: 48px;
+  align-items: start;
+}
+
+.chart-container {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  padding: 32px;
+  position: relative;
+}
+.chart-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+  display: block;
+}
+.chart-note {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.25);
+  margin-top: 16px;
+  font-style: italic;
+}
+
+.data-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.insight-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 20px 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: var(--trans);
+}
+.insight-item:hover { background: rgba(255,255,255,0.06); }
+.insight-num {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 60px;
+}
+.insight-text strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.insight-text p {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.55;
+  font-weight: 300;
+}
+.insight-trend {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+}
+.trend-up { color: var(--crimson); }
+.trend-stable { color: var(--gold); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ALERTS
+═══════════════════════════════════════════════════════════════ */
+#alerts {
+  background: var(--white);
+  padding: 80px 0;
+  border-top: 3px solid var(--crimson);
+}
+.alerts-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.alerts-live-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--crimson);
+  color: var(--white);
+  padding: 5px 12px;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.live-dot {
+  width: 7px; height: 7px;
+  background: var(--white);
+  border-radius: 50%;
+  animation: live-pulse 1.5s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.alert-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.alert-card {
+  border: 1px solid var(--smoke2);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--trans);
+}
+.alert-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+}
+.alert-card.high::before { background: var(--crimson); }
+.alert-card.medium::before { background: var(--gold); }
+.alert-card.low::before { background: var(--slate2); }
+.alert-card:hover { box-shadow: var(--shadow); }
+
+.alert-level {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.alert-card.high .alert-level { color: var(--crimson); }
+.alert-card.medium .alert-level { color: var(--gold2); }
+.alert-card.low .alert-level { color: var(--slate2); }
+.alert-level-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.alert-card.high .alert-level-dot { background: var(--crimson); }
+.alert-card.medium .alert-level-dot { background: var(--gold); }
+.alert-card.low .alert-level-dot { background: var(--slate2); }
+
+.alert-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+.alert-desc {
+  font-size: 0.80rem;
+  color: var(--grey);
+  line-height: 1.65;
+  font-weight: 300;
+  margin-bottom: 14px;
+}
+.alert-date {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--lightgrey);
+  letter-spacing: 0.05em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ALLIANCES
+═══════════════════════════════════════════════════════════════ */
+#alliances {
+  background: var(--smoke);
+  padding: 80px 0;
+}
+.alliances-header { text-align: center; margin-bottom: 56px; }
+.alliances-header .section-subtitle { margin: 0 auto; }
+
+.alliance-groups {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.alliance-group {
+  background: var(--white);
+  padding: 36px 28px;
+}
+.ag-icon {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  display: block;
+}
+.ag-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--smoke2);
+}
+.ag-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ag-list li {
+  font-size: 0.83rem;
+  color: var(--grey);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+}
+.ag-list li::before {
+  content: '·';
+  color: var(--gold);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTACT / REPORT
+═══════════════════════════════════════════════════════════════ */
+#contact {
+  background: var(--navy);
+  padding: 96px 0;
+}
+#contact .section-title { color: var(--white); }
+#contact .section-subtitle { color: rgba(255,255,255,0.5); }
+#contact .gold-rule { margin-bottom: 0; }
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 64px;
+  margin-top: 48px;
+  align-items: start;
+}
+.contact-info {}
+.contact-info-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.contact-info-item:last-child { border-bottom: none; margin-bottom: 0; }
+.ci-icon {
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  border-radius: var(--radius);
+}
+.ci-text strong {
+  display: block;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 2px;
+}
+.ci-text span {
+  font-size: 0.80rem;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+.contact-privacy {
+  background: rgba(212,160,23,0.07);
+  border: 1px solid rgba(212,160,23,0.2);
+  padding: 18px 20px;
+  margin-top: 28px;
+}
+.contact-privacy p {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.65;
+  font-weight: 300;
+}
+.contact-privacy strong {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* Form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.form-group { display: flex; flex-direction: column; gap: 0; }
+.form-group label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 14px 16px 6px;
+  background: rgba(255,255,255,0.04);
+  display: block;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  background: rgba(255,255,255,0.04);
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 10px 16px 14px;
+  color: rgba(255,255,255,0.85);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 300;
+  outline: none;
+  transition: var(--trans);
+  width: 100%;
+  -webkit-appearance: none;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-bottom-color: var(--gold);
+  background: rgba(255,255,255,0.06);
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: rgba(255,255,255,0.2);
+  font-weight: 300;
+}
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-group select { color: rgba(255,255,255,0.6); }
+.form-group select option { background: var(--navy); color: var(--white); }
+.form-anon {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+}
+.form-anon input[type="checkbox"] { margin-top: 2px; accent-color: var(--gold); }
+.form-anon label {
+  font-size: 0.80rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.55;
+  cursor: pointer;
+  font-weight: 300;
+}
+.form-submit {
+  padding-top: 4px;
+}
+
+#form-success {
+  display: none;
+  background: rgba(26,107,60,0.15);
+  border: 1px solid rgba(26,107,60,0.4);
+  padding: 20px;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════════ */
+#footer {
+  background: var(--navy3);
+  padding: 60px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.footer-brand {}
+.footer-brand-name {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--white);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.footer-brand-name span { color: var(--gold); }
+.footer-brand-full {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.5;
+  margin-bottom: 18px;
+  font-weight: 300;
+}
+.footer-tagline {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+  font-style: italic;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.footer-col-title {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.footer-links a {
+  font-size: 0.81rem;
+  color: rgba(255,255,255,0.4);
+  transition: var(--trans);
+  display: block;
+}
+.footer-links a:hover { color: rgba(255,255,255,0.85); padding-left: 4px; }
+
+.footer-bottom {
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-copy {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.25);
+}
+.footer-legal {
+  display: flex;
+  gap: 20px;
+}
+.footer-legal a {
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.25);
+  transition: var(--trans);
+}
+.footer-legal a:hover { color: rgba(255,255,255,0.65); }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+
+  .context-inner    { grid-template-columns: 1fr; gap: 40px; }
+  .about-grid       { grid-template-columns: 1fr; gap: 40px; }
+  .lines-grid       { grid-template-columns: 1fr; }
+  .line-card.wide   { grid-column: span 1; grid-template-columns: 1fr; }
+  .pub-grid         { grid-template-columns: 1fr; }
+  .pub-card.featured{ grid-column: span 1; }
+  .data-layout      { grid-template-columns: 1fr; }
+  .alert-grid       { grid-template-columns: 1fr; }
+  .alliance-groups  { grid-template-columns: 1fr; }
+  .contact-layout   { grid-template-columns: 1fr; }
+  .footer-top       { grid-template-columns: 1fr 1fr; }
+  .form-row         { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .container { padding: 0 20px; }
+  .hero-content { padding: 100px 20px 60px; }
+  .hero-stats { gap: 24px; }
+  .footer-top { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .pub-header { flex-direction: column; align-items: flex-start; }
+  .context-stats { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <span class="topbar-dot"></span>
+  Alerta activa: Grupo de Trabajo ONU sobre Mercenarios publicó hallazgos preliminares sobre Colombia — Marzo 2026
+  <span class="topbar-dot"></span>
+  <a href="#alerts">Ver alertas</a>
+  <span class="topbar-dot"></span>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-brand">
+      <!-- SVG Logo Mark -->
+      <svg class="nav-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Shield -->
+        <polygon points="18,2 32,8 32,22 18,34 4,22 4,8" fill="#162B4F" stroke="#D4A017" stroke-width="1.5"/>
+        <!-- Globe circle -->
+        <circle cx="18" cy="17" r="8" fill="none" stroke="#D4A017" stroke-width="1.2"/>
+        <!-- Meridians -->
+        <line x1="18" y1="9" x2="18" y2="25" stroke="#D4A017" stroke-width="0.9"/>
+        <line x1="10" y1="17" x2="26" y2="17" stroke="#D4A017" stroke-width="0.9"/>
+        <!-- Observation dot -->
+        <circle cx="18" cy="17" r="2.5" fill="#C0392B"/>
+        <circle cx="18" cy="17" r="1" fill="white"/>
+      </svg>
+      <div class="nav-brand-text">
+        <strong>OMRIC</strong>
+        <span>Observatorio · Colombia</span>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#about">Qué es</a></li>
+      <li><a href="#lines">Líneas</a></li>
+      <li><a href="#publications">Publicaciones</a></li>
+      <li><a href="#data">Datos</a></li>
+      <li><a href="#alerts">Alertas</a></li>
+      <li><a href="#alliances">Alianzas</a></li>
+      <li><a href="#contact" class="nav-cta">Reportar caso</a></li>
+    </ul>
+
+    <div class="nav-hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="#about">Qué es OMRIC</a>
+    <a href="#lines">Líneas de trabajo</a>
+    <a href="#publications">Publicaciones</a>
+    <a href="#data">Datos</a>
+    <a href="#alerts">Alertas</a>
+    <a href="#alliances">Alianzas</a>
+    <a href="#contact">Reportar caso</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-noise"></div>
+    <div class="hero-accent-line hal-1"></div>
+    <div class="hero-accent-line hal-2"></div>
+    <div class="hero-accent-line hal-3"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow fade-in">
+      <span class="hero-badge">Observatorio Independiente · Colombia · Est. 2026</span>
+      <span class="hero-eyebrow-line"></span>
+    </div>
+
+    <h1 class="hero-title fade-in" style="transition-delay:0.1s">
+      OM<span class="hero-title-accent">RIC</span>
+    </h1>
+
+    <p class="hero-subtitle fade-in" style="transition-delay:0.2s">
+      Observatorio de Mercenarismo y Reclutamiento Internacional de Colombianos
+    </p>
+
+    <p class="hero-tagline fade-in" style="transition-delay:0.3s">
+      <em>Datos que protegen.</em> Evidencia que previene.
+    </p>
+
+    <div class="hero-actions fade-in" style="transition-delay:0.4s">
+      <a href="#publications" class="btn btn-primary">Ver informes →</a>
+      <a href="#contact" class="btn btn-outline-white">Reportar un caso</a>
+    </div>
+
+    <div class="hero-stats fade-in" style="transition-delay:0.5s">
+      <div class="hero-stat-item">
+        <span class="hero-stat-num"><span>+</span>10.000</span>
+        <span class="hero-stat-label">Colombianos<br>reclutados (est.)</span>
+      </div>
+      <div class="hero-stat-item">
+        <span class="hero-stat-num"><span>+</span>600</span>
+        <span class="hero-stat-label">Familias<br>afectadas</span>
+      </div>
+      <div class="hero-stat-item">
+        <span class="hero-stat-num">6</span>
+        <span class="hero-stat-label">Zonas de<br>conflicto activo</span>
+      </div>
+      <div class="hero-stat-item">
+        <span class="hero-stat-num">2026</span>
+        <span class="hero-stat-label">Ley 2569<br>vigente</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>scroll</span>
+  </div>
+</section>
+
+<!-- CONTEXT -->
+<section id="context">
+  <div class="container">
+    <div class="context-inner">
+      <div class="context-left fade-in">
+        <span class="section-label">El fenómeno</span>
+        <h2 class="section-title" style="color:white">Colombia exporta experiencia bélica al mundo</h2>
+        <div class="gold-rule"></div>
+        <p class="section-subtitle" style="color:rgba(255,255,255,0.5)">
+          Más de una década de conflicto armado interno ha generado un excedente de personal con capacitación militar. Hoy, redes transnacionales reclutan sistemáticamente a colombianos — exmilitares, expolicías y civiles — para conflictos armados en cuatro continentes.
+        </p>
+      </div>
+      <div class="context-right fade-in" style="transition-delay:0.15s">
+        <div class="context-stats">
+          <div class="cstat">
+            <span class="cstat-icon">⚔️</span>
+            <span class="cstat-num">+10.000</span>
+            <div class="cstat-label">colombianos reclutados en conflictos internacionales en la última década</div>
+          </div>
+          <div class="cstat">
+            <span class="cstat-icon">👨‍👩‍👧</span>
+            <span class="cstat-num">+600</span>
+            <div class="cstat-label">familias organizadas exigiendo información al Estado</div>
+          </div>
+          <div class="cstat">
+            <span class="cstat-icon">🏢</span>
+            <span class="cstat-num">1.351</span>
+            <div class="cstat-label">empresas de seguridad privada registradas en Colombia</div>
+          </div>
+          <div class="cstat">
+            <span class="cstat-icon">🔫</span>
+            <span class="cstat-num">60.000</span>
+            <div class="cstat-label">armas sin licencia vinculadas a actores privados y armados</div>
+          </div>
+        </div>
+        <div class="context-countries">
+          <span class="context-countries-label">Presencia documentada de combatientes colombianos</span>
+          <div class="country-tags">
+            <span class="ctag">RD Congo</span>
+            <span class="ctag">Ucrania</span>
+            <span class="ctag">Sudán</span>
+            <span class="ctag">Yemen</span>
+            <span class="ctag">Somalia</span>
+            <span class="ctag">Rusia</span>
+            <span class="ctag">México</span>
+            <span class="ctag">Brasil</span>
+            <span class="ctag">Arabia Saudí</span>
+            <span class="ctag">EAU</span>
+            <span class="ctag">Ecuador</span>
+            <span class="ctag">Haití</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-left fade-in">
+        <span class="section-label">El Observatorio</span>
+        <h2 class="section-title">¿Qué es el OMRIC?</h2>
+        <div class="gold-rule"></div>
+        <p class="section-subtitle">
+          El OMRIC es una plataforma académica e independiente de investigación sobre mercenarismo colombiano. No somos un organismo gubernamental ni una organización activista: somos un instrumento técnico de producción de evidencia para la protección de derechos.
+        </p>
+        <div style="margin-top:36px">
+          <div class="about-pillars">
+            <div class="pillar">
+              <div class="pillar-icon">📊</div>
+              <div class="pillar-text">
+                <strong>Rigor técnico ante todo</strong>
+                <p>Toda información publicada pasa por protocolo de verificación y análisis previo. No publicamos sin método explícito.</p>
+              </div>
+            </div>
+            <div class="pillar">
+              <div class="pillar-icon">🛡️</div>
+              <div class="pillar-text">
+                <strong>Independencia editorial total</strong>
+                <p>Sin subordinación a ningún partido político, entidad gubernamental o donante. La línea editorial la define el Comité Científico.</p>
+              </div>
+            </div>
+            <div class="pillar">
+              <div class="pillar-icon">🔒</div>
+              <div class="pillar-text">
+                <strong>Ética en manejo de datos</strong>
+                <p>Anonimización estricta de fuentes, familias e informantes. Protocolo de protección de datos conforme a la Ley 1581 de 2012.</p>
+              </div>
+            </div>
+            <div class="pillar">
+              <div class="pillar-icon">🎯</div>
+              <div class="pillar-text">
+                <strong>Utilidad pública como criterio</strong>
+                <p>Cada producto tiene un destinatario claro: el Estado, la academia o la sociedad civil. No producimos conocimiento sin destino.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="about-right fade-in" style="transition-delay:0.15s">
+        <div class="about-mission">
+          <span class="about-mission-label">Misión</span>
+          <p>Investigar, documentar y analizar el fenómeno del mercenarismo y el reclutamiento internacional de colombianos mediante la producción de información rigurosa, independiente y ética, orientada a la formulación de políticas públicas efectivas y la protección de los derechos de los ciudadanos afectados.</p>
+        </div>
+        <div class="about-vision">
+          <span class="about-vision-label">Visión · 2030</span>
+          <p>Ser el referente técnico nacional e internacional de mayor rigor en el análisis del mercenarismo colombiano, reconocido por organismos multilaterales, el Estado y las organizaciones de víctimas como la fuente más confiable e independiente sobre el fenómeno.</p>
+        </div>
+        <div style="margin-top:20px; background:var(--smoke); padding:24px; border-left:3px solid var(--crimson)">
+          <p style="font-size:0.82rem; color:var(--slate); line-height:1.7; font-weight:300">
+            <strong style="color:var(--crimson); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:8px">¿Por qué ahora?</strong>
+            La Ley 2569 (2026) ratificó la Convención Internacional contra el Mercenarismo. El Grupo de Trabajo de la ONU visitó Colombia en marzo de 2026 y confirmó más de 10.000 casos. Hay una ventana crítica de política pública que requiere evidencia técnica de calidad. El OMRIC existe para producirla.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK LINES -->
+<section id="lines">
+  <div class="container">
+    <div class="lines-header fade-in">
+      <span class="section-label">Qué hacemos</span>
+      <h2 class="section-title">Líneas de trabajo</h2>
+      <p class="section-subtitle">Cinco ejes de acción que articulan investigación, análisis y acción humanitaria en torno al fenómeno del mercenarismo colombiano.</p>
+    </div>
+
+    <div class="lines-grid">
+      <!-- Card 1 -->
+      <div class="line-card fade-in">
+        <span class="lc-num">L — 01</span>
+        <div class="lc-icon">🗄️</div>
+        <div class="lc-title">Sistemas de Información</div>
+        <p class="lc-desc">Base de datos sistemática de casos documentados: rutas de reclutamiento, perfiles socioeconómicos y patrones geográficos. Dashboard público actualizado.</p>
+        <span class="lc-tag">En construcción · 2026</span>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="line-card fade-in" style="transition-delay:0.08s">
+        <span class="lc-num">L — 02</span>
+        <div class="lc-icon">🚨</div>
+        <div class="lc-title">Alertas Tempranas</div>
+        <p class="lc-desc">Monitoreo de plataformas digitales y redes de reclutamiento. Boletín mensual con señales de riesgo emergentes. Mapa de vulnerabilidad territorial en Colombia.</p>
+        <span class="lc-tag">Activo</span>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="line-card fade-in" style="transition-delay:0.16s">
+        <span class="lc-num">L — 03</span>
+        <div class="lc-icon">🔬</div>
+        <div class="lc-title">Investigación y Análisis</div>
+        <p class="lc-desc">Informes técnicos semestrales, policy briefs trimestrales y artículos académicos indexados. Metodología transparente y verificable.</p>
+        <span class="lc-tag">Activo</span>
+      </div>
+
+      <!-- Card Wide -->
+      <div class="line-card wide fade-in" style="transition-delay:0.24s">
+        <div class="lc-content">
+          <span class="lc-num">L — 04</span>
+          <div class="lc-icon">⚖️</div>
+          <div class="lc-title">Incidencia en Política Pública</div>
+          <p class="lc-desc">Participación técnica en mesas del Congreso y el Ejecutivo. Seguimiento a la implementación de la Ley 2569. Insumos para reformas normativas.</p>
+          <span class="lc-tag">Activo</span>
+        </div>
+        <div class="lc-products">
+          <div class="lc-product-item">Informe anual de seguimiento a la Ley 2569 · cumplimiento, avances y brechas</div>
+          <div class="lc-product-item">Participación como voz técnica especializada en mesas del Congreso</div>
+          <div class="lc-product-item">Policy briefs para Cancillería y Ministerio de Defensa</div>
+          <div class="lc-product-item">Recomendaciones al Consejo de Derechos Humanos ONU · sept. 2026</div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="line-card fade-in" style="transition-delay:0.32s">
+        <span class="lc-num">L — 05</span>
+        <div class="lc-icon">🤝</div>
+        <div class="lc-title">Atención a Familias</div>
+        <p class="lc-desc">Protocolo ético de atención a familias afectadas. Recolección de testimonios con garantías de confidencialidad. Directorio de servicios consulares y jurídicos.</p>
+        <span class="lc-tag">Protocolo activo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PUBLICATIONS -->
+<section id="publications">
+  <div class="container">
+    <div class="pub-header">
+      <div class="fade-in">
+        <span class="section-label">Conocimiento</span>
+        <h2 class="section-title">Publicaciones</h2>
+      </div>
+      <div class="pub-filters fade-in">
+        <button class="pub-filter active" data-filter="all">Todas</button>
+        <button class="pub-filter" data-filter="informe">Informes</button>
+        <button class="pub-filter" data-filter="policy">Policy Brief</button>
+        <button class="pub-filter" data-filter="articulo">Artículos</button>
+      </div>
+    </div>
+
+    <div class="pub-grid">
+
+      <!-- Featured -->
+      <div class="pub-card featured fade-in" data-type="informe">
+        <div style="width:5px; background:var(--gold); flex-shrink:0"></div>
+        <div class="pub-card-body">
+          <span class="pub-type-badge" style="background:var(--gold); color:var(--navy)">Informe técnico destacado</span>
+          <div class="pub-title">Estado del arte del mercenarismo colombiano 2015–2026: análisis sistematizado del fenómeno</div>
+          <div class="pub-meta">OMRIC · Primer informe  ·  Bogotá, Junio 2026  ·  87 páginas</div>
+          <p class="pub-excerpt">Primera sistematización comprehensiva del fenómeno del mercenarismo colombiano. Analiza más de 10.000 casos documentados, rutas de reclutamiento, perfiles socioeconómicos y recomendaciones de política pública. Insumo principal para la implementación de la Ley 2569.</p>
+          <a href="#" class="pub-link">Acceder al informe</a>
+        </div>
+      </div>
+
+      <!-- Regular -->
+      <div class="pub-card fade-in" data-type="policy" style="transition-delay:0.08s">
+        <div class="pub-card-stripe" style="background:var(--crimson)"></div>
+        <div class="pub-card-body">
+          <span class="pub-type-badge" style="background:var(--crimson)">Policy Brief</span>
+          <div class="pub-title">Implementación de la Ley 2569: brechas institucionales y recomendaciones urgentes</div>
+          <div class="pub-meta">OMRIC · PB-001  ·  Julio 2026  ·  12 páginas</div>
+          <p class="pub-excerpt">Análisis de los vacíos en la implementación de la nueva ley antimercenarismo. Recomendaciones concretas para Cancillería, Ministerio de Defensa y Fiscalía.</p>
+          <a href="#" class="pub-link">Leer policy brief</a>
+        </div>
+      </div>
+
+      <div class="pub-card fade-in" data-type="informe" style="transition-delay:0.12s">
+        <div class="pub-card-stripe" style="background:var(--navy)"></div>
+        <div class="pub-card-body">
+          <span class="pub-type-badge" style="background:var(--navy)">Informe técnico</span>
+          <div class="pub-title">Colombianos en el conflicto de Sudán: reclutamiento predatorio y trata de personas</div>
+          <div class="pub-meta">OMRIC · IT-002  ·  Agosto 2026  ·  34 páginas</div>
+          <p class="pub-excerpt">Documentación de las rutas de reclutamiento que llevaron a más de 300 exmilitares colombianos al conflicto de Sudán. Testimonios de familias y análisis de la cadena de engaño.</p>
+          <a href="#" class="pub-link">Leer informe</a>
+        </div>
+      </div>
+
+      <div class="pub-card fade-in" data-type="articulo" style="transition-delay:0.16s">
+        <div class="pub-card-stripe" style="background:var(--gold)"></div>
+        <div class="pub-card-body">
+          <span class="pub-type-badge" style="background:var(--gold); color:var(--navy)">Artículo académico</span>
+          <div class="pub-title">Mercenarismo colombiano como economía de guerra: enfoque desde la seguridad humana</div>
+          <div class="pub-meta">Revista Derecho del Estado  ·  Vol. 58  ·  2026</div>
+          <p class="pub-excerpt">Análisis teórico-empírico del fenómeno desde el marco de la seguridad humana. Propone una taxonomía de tres categorías para clasificar a los combatientes colombianos en el exterior.</p>
+          <a href="#" class="pub-link">Leer artículo</a>
+        </div>
+      </div>
+
+      <div class="pub-card fade-in" data-type="policy" style="transition-delay:0.20s">
+        <div class="pub-card-stripe" style="background:var(--crimson)"></div>
+        <div class="pub-card-body">
+          <span class="pub-type-badge" style="background:var(--crimson)">Policy Brief</span>
+          <div class="pub-title">Reclutamiento digital: propuesta de regulación de plataformas y agencias de contratación</div>
+          <div class="pub-meta">OMRIC · PB-002  ·  Septiembre 2026  ·  16 páginas</div>
+          <p class="pub-excerpt">El reclutamiento a través de WhatsApp, Telegram y TikTok no está regulado. Este policy brief propone un marco normativo específico para el entorno digital.</p>
+          <a href="#" class="pub-link">Leer policy brief</a>
+        </div>
+      </div>
+
+      <div class="pub-card fade-in" data-type="articulo" style="transition-delay:0.24s">
+        <div class="pub-card-stripe" style="background:var(--slate)"></div>
+        <div class="pub-card-body">
+          <span class="pub-type-badge" style="background:var(--slate)">Artículo académico</span>
+          <div class="pub-title">Vulnerabilidad socioeconómica y mercenarismo: análisis de los factores de expulsión en Colombia</div>
+          <div class="pub-meta">Colombia Internacional  ·  Uniandes  ·  2026</div>
+          <p class="pub-excerpt">¿Por qué los colombianos son los más solicitados en el mercado global del combate? Un análisis de las condiciones estructurales que producen y reproducen el fenómeno.</p>
+          <a href="#" class="pub-link">Leer artículo</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DATA -->
+<section id="data">
+  <div class="container">
+    <div class="fade-in">
+      <span class="section-label">Evidencia cuantitativa</span>
+      <h2 class="section-title">Datos y visualización</h2>
+      <p class="section-subtitle">Estimaciones basadas en información pública, reportes de la ONU e información primaria recolectada por el OMRIC. Datos en construcción — primera versión definitiva: junio 2026.</p>
+    </div>
+
+    <div class="data-layout">
+      <div class="chart-container fade-in" style="transition-delay:0.1s">
+        <span class="chart-label">Distribución estimada por región de destino (2015–2026)</span>
+        <canvas id="myChart" style="max-height:320px"></canvas>
+        <p class="chart-note">* Fuentes: ONU-OHCHR (2026), La Silla Vacía, testimonios directos recopilados por OMRIC. N estimado: +10.000 casos.</p>
+      </div>
+
+      <div class="data-insights fade-in" style="transition-delay:0.2s">
+        <div class="insight-item">
+          <div class="insight-num">83%</div>
+          <div class="insight-text">
+            <strong>Ex-Fuerzas Militares o Policía</strong>
+            <p>La gran mayoría de reclutados tiene antecedentes en instituciones de seguridad del Estado colombiano.</p>
+            <span class="insight-trend trend-up">↑ Tendencia creciente</span>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-num">~$500</div>
+          <div class="insight-text">
+            <strong>Brecha salarial mensual (USD)</strong>
+            <p>Pensión media de militar retirado vs. USD $2.000–6.000 ofrecidos por redes de reclutamiento.</p>
+            <span class="insight-trend trend-up">↑ Factor principal de captación</span>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-num">65%</div>
+          <div class="insight-text">
+            <strong>Reclutados vía plataformas digitales</strong>
+            <p>WhatsApp, Telegram y Facebook son los principales canales de captación activa en Colombia.</p>
+            <span class="insight-trend trend-up">↑ Aceleración desde 2022</span>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-num">40%</div>
+          <div class="insight-text">
+            <strong>Casos con indicios de engaño total</strong>
+            <p>Personas que creyeron ir a trabajos de seguridad privada legítima antes de llegar a zona de combate.</p>
+            <span class="insight-trend trend-stable">~ Estable desde 2020</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALERTS -->
+<section id="alerts">
+  <div class="container">
+    <div class="alerts-header fade-in">
+      <div>
+        <span class="section-label">Sistema de alertas</span>
+        <h2 class="section-title">Alertas tempranas activas</h2>
+      </div>
+      <div class="alerts-live-badge">
+        <span class="live-dot"></span>
+        En vivo · Actualizado
+      </div>
+    </div>
+
+    <div class="alert-grid">
+      <div class="alert-card high fade-in">
+        <div class="alert-level"><span class="alert-level-dot"></span>Nivel alto · Reclutamiento activo</div>
+        <div class="alert-title">Captación mediante grupos de Telegram con ofertas para "operaciones de seguridad en África"</div>
+        <p class="alert-desc">Se han identificado al menos 8 grupos activos en Telegram que ofrecen contratos de USD $3.000–4.500 mensuales para desplazamiento a zonas de conflicto en el continente africano, principalmente República Democrática del Congo y Sudán.</p>
+        <div class="alert-date">Detectado: Marzo 2026  ·  Actualización: Abril 2026</div>
+      </div>
+
+      <div class="alert-card high fade-in" style="transition-delay:0.08s">
+        <div class="alert-level"><span class="alert-level-dot"></span>Nivel alto · Engaño documentado</div>
+        <div class="alert-title">Red de reclutamiento con fachada de empresa de seguridad privada en Bogotá y Medellín</div>
+        <p class="alert-desc">Se documentan testimonios de familias cuyos integrantes fueron captados por una empresa con registro de seguridad privada pero que en realidad opera como intermediaria para operaciones de combate en Yemen y Arabia Saudí.</p>
+        <div class="alert-date">Detectado: Febrero 2026  ·  Estado: Activo</div>
+      </div>
+
+      <div class="alert-card medium fade-in" style="transition-delay:0.16s">
+        <div class="alert-level"><span class="alert-level-dot"></span>Nivel medio · Monitoreo</div>
+        <div class="alert-title">Incremento de ofertas de empleo en portales de trabajo para "instructores militares" en Oriente Medio</div>
+        <p class="alert-desc">Portales de empleo como Indeed y LinkedIn muestran un aumento del 43% en publicaciones dirigidas a veteranos colombianos para roles en países de Oriente Medio. La naturaleza real de los contratos no se especifica en los anuncios.</p>
+        <div class="alert-date">Detectado: Enero 2026  ·  Seguimiento continuo</div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px; text-align:center; padding:20px; background:rgba(192,57,43,0.05); border:1px solid rgba(192,57,43,0.15)" class="fade-in">
+      <p style="font-size:0.83rem; color:var(--grey); margin-bottom:12px">¿Identificó una red de reclutamiento o conoce a alguien en riesgo?</p>
+      <a href="#contact" class="btn btn-crimson">Reportar información al OMRIC →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ALLIANCES -->
+<section id="alliances">
+  <div class="container">
+    <div class="alliances-header fade-in">
+      <span class="section-label">Ecosistema institucional</span>
+      <h2 class="section-title">Alianzas estratégicas</h2>
+      <p class="section-subtitle">El OMRIC opera en articulación con instituciones académicas, entidades estatales y organismos internacionales comprometidos con la protección de los derechos humanos.</p>
+    </div>
+
+    <div class="alliance-groups">
+      <div class="alliance-group fade-in">
+        <span class="ag-icon">🎓</span>
+        <div class="ag-title">Academia e Investigación</div>
+        <ul class="ag-list">
+          <li>Escuela Superior de Administración Pública (ESAP)</li>
+          <li>Universidad Nacional de Colombia — Obs. Paz y Conflictos</li>
+          <li>Universidad Externado de Colombia — Facultad de Derecho</li>
+          <li>Instituto de Estudios Políticos y Relaciones Internacionales (IEPRI)</li>
+          <li>DeJusticia — Centro de Estudios en Derecho</li>
+          <li>La Silla Vacía — Periodismo de datos e investigación</li>
+        </ul>
+      </div>
+      <div class="alliance-group fade-in" style="transition-delay:0.1s">
+        <span class="ag-icon">🏛️</span>
+        <div class="ag-title">Estado Colombiano</div>
+        <ul class="ag-list">
+          <li>Cancillería — Dirección de Asuntos Consulares</li>
+          <li>Ministerio de Defensa Nacional</li>
+          <li>Defensoría del Pueblo — Sistema de Alertas Tempranas</li>
+          <li>Congreso de la República</li>
+          <li>Ministerio de Relaciones Exteriores</li>
+          <li>Unidad para las Víctimas</li>
+        </ul>
+      </div>
+      <div class="alliance-group fade-in" style="transition-delay:0.2s">
+        <span class="ag-icon">🌐</span>
+        <div class="ag-title">Organismos Internacionales</div>
+        <ul class="ag-list">
+          <li>ONU — Grupo de Trabajo sobre Mercenarios (OHCHR)</li>
+          <li>Consejo de Derechos Humanos de la ONU</li>
+          <li>Organización de Estados Americanos (OEA)</li>
+          <li>CLACSO — Consejo Latinoamericano de CCSS</li>
+          <li>GIZ — Cooperación Alemana Colombia</li>
+          <li>Organizaciones de familias afectadas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="fade-in">
+      <span class="section-label">Canales seguros</span>
+      <h2 class="section-title">Contacto y reporte de casos</h2>
+      <div class="gold-rule"></div>
+    </div>
+
+    <div class="contact-layout">
+      <div class="contact-info fade-in">
+        <div class="contact-info-item">
+          <div class="ci-icon">📧</div>
+          <div class="ci-text">
+            <strong>Correo institucional</strong>
+            <span>omric@omric.org.co<br>Respuesta en máximo 48 horas hábiles</span>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ci-icon">🌐</div>
+          <div class="ci-text">
+            <strong>Sitio web oficial</strong>
+            <span>omric.org.co<br>omric.co (redirección)</span>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ci-icon">📍</div>
+          <div class="ci-text">
+            <strong>Sede operativa</strong>
+            <span>Bogotá D.C., Colombia<br>Atención con cita previa</span>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ci-icon">🔒</div>
+          <div class="ci-text">
+            <strong>Canal cifrado de denuncias</strong>
+            <span>omric.org.co/denuncia-segura<br>Formulario encriptado — anonimato garantizado</span>
+          </div>
+        </div>
+
+        <div class="contact-privacy">
+          <p><strong>Su información está protegida.</strong> Todo dato suministrado a través de este formulario se maneja bajo protocolo de confidencialidad estricto, conforme a la Ley 1581 de 2012 (Habeas Data). <strong>El OMRIC nunca comparte información con entidades judiciales, militares o medios de comunicación sin autorización expresa por escrito.</strong></p>
+        </div>
+      </div>
+
+      <form class="contact-form fade-in" style="transition-delay:0.15s" id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">Nombre (o alias)</label>
+            <input type="text" id="nombre" placeholder="Puede usar seudónimo">
+          </div>
+          <div class="form-group">
+            <label for="correo">Correo electrónico</label>
+            <input type="email" id="correo" placeholder="su@correo.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tipo">Tipo de comunicación</label>
+          <select id="tipo">
+            <option value="">Seleccione una opción</option>
+            <option>Reporte de caso (familiar afectado)</option>
+            <option>Información sobre red de reclutamiento</option>
+            <option>Solicitud de información / asesoría</option>
+            <option>Propuesta de colaboración institucional</option>
+            <option>Consulta de investigación</option>
+            <option>Otra comunicación</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ciudad">Ciudad y departamento</label>
+          <input type="text" id="ciudad" placeholder="Ej: Bogotá, Cundinamarca">
+        </div>
+        <div class="form-group">
+          <label for="mensaje">Mensaje</label>
+          <textarea id="mensaje" placeholder="Describa brevemente su situación o consulta. No incluya información que lo identifique si prefiere mantener el anonimato."></textarea>
+        </div>
+        <div class="form-anon">
+          <input type="checkbox" id="anon" name="anon">
+          <label for="anon">Solicito que mi identidad sea tratada con anonimato total. Entiendo que el OMRIC no compartirá mis datos con terceros.</label>
+        </div>
+        <div class="form-anon">
+          <input type="checkbox" id="consent" name="consent">
+          <label for="consent">Autorizo el uso de la información suministrada con fines humanitarios y de investigación, conforme a la política de privacidad del OMRIC (Ley 1581 de 2012).</label>
+        </div>
+        <div class="form-submit">
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center">
+            Enviar mensaje de forma segura →
+          </button>
+        </div>
+        <div id="form-success">
+          ✓ Su mensaje ha sido recibido. El equipo del OMRIC lo revisará en las próximas 48 horas hábiles. Si marcó solicitud de anonimato, su identidad no será revelada bajo ninguna circunstancia.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-brand-name">OM<span>RIC</span></div>
+        <div class="footer-brand-full">Observatorio de Mercenarismo y Reclutamiento Internacional de Colombianos</div>
+        <div style="display:flex; gap:10px; margin-bottom:16px">
+          <a href="#" title="X / Twitter" style="width:32px;height:32px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-size:0.8rem;transition:var(--trans)" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">𝕏</a>
+          <a href="#" title="LinkedIn" style="width:32px;height:32px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-size:0.75rem;transition:var(--trans)" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">in</a>
+        </div>
+        <div class="footer-tagline">"Datos que protegen. Evidencia que previene."</div>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Secciones</div>
+        <ul class="footer-links">
+          <li><a href="#about">Qué es el OMRIC</a></li>
+          <li><a href="#lines">Líneas de trabajo</a></li>
+          <li><a href="#publications">Publicaciones</a></li>
+          <li><a href="#data">Datos y estadísticas</a></li>
+          <li><a href="#alerts">Alertas tempranas</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Recursos</div>
+        <ul class="footer-links">
+          <li><a href="#">Formulario de registro</a></li>
+          <li><a href="#">Metodología</a></li>
+          <li><a href="#">Política de privacidad</a></li>
+          <li><a href="#">Marco normativo</a></li>
+          <li><a href="#">Convención ONU 1989</a></li>
+          <li><a href="#">Ley 2569 de 2026</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Contacto</div>
+        <ul class="footer-links">
+          <li><a href="mailto:omric@omric.org.co">omric@omric.org.co</a></li>
+          <li><a href="#">Bogotá D.C., Colombia</a></li>
+          <li><a href="#">omric.org.co</a></li>
+          <li style="margin-top:8px">
+            <a href="#contact" style="display:inline-block; background:var(--crimson); color:white; padding:7px 14px; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; border-radius:2px">Reportar caso →</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">
+        © 2026 OMRIC — Observatorio de Mercenarismo y Reclutamiento Internacional de Colombianos.<br>
+        Todos los derechos reservados. Bogotá D.C., Colombia.
+      </div>
+      <div class="footer-legal">
+        <a href="#">Política de privacidad</a>
+        <a href="#">Términos de uso</a>
+        <a href="#">Transparencia</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════ -->
+<script>
+/* ── Nav scroll behavior ─────────────────────────────────────── */
+const nav   = document.getElementById('nav');
+const topH  = document.getElementById('topbar').offsetHeight;
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 60) {
+    nav.style.top = '0';
+    nav.classList.add('scrolled');
+  } else {
+    nav.style.top = topH + 'px';
+    nav.classList.remove('scrolled');
+  }
+}, { passive: true });
+
+// Init nav position
+nav.style.top = topH + 'px';
+
+/* ── Hamburger ───────────────────────────────────────────────── */
+const hamburger = document.getElementById('hamburger');
+const navMobile = document.getElementById('nav-mobile');
+hamburger.addEventListener('click', () => {
+  navMobile.classList.toggle('open');
+});
+// Close mobile nav on link click
+navMobile.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => navMobile.classList.remove('open'));
+});
+
+/* ── Scroll fade-in (IntersectionObserver) ───────────────────── */
+const fadeEls = document.querySelectorAll('.fade-in');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+// Hero items visible immediately
+document.querySelectorAll('#hero .fade-in').forEach(el => {
+  setTimeout(() => el.classList.add('visible'),
+    parseInt(el.style.transitionDelay || '0') * 1000 + 200);
+});
+// Observe rest
+fadeEls.forEach(el => {
+  if (!el.closest('#hero')) io.observe(el);
+});
+
+/* ── Chart.js ────────────────────────────────────────────────── */
+const ctx = document.getElementById('myChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['África\n(Sudán, Congo)', 'Europa\n(Ucrania, Rusia)', 'Medio Oriente\n(Yemen, EAU)', 'América Latina\n(México, Brasil)', 'Asia y\nOtros'],
+    datasets: [{
+      label: 'Casos estimados por región',
+      data: [3800, 2900, 2100, 1400, 800],
+      backgroundColor: [
+        'rgba(192,57,43,0.75)',
+        'rgba(13,31,60,0.75)',
+        'rgba(44,62,80,0.75)',
+        'rgba(212,160,23,0.75)',
+        'rgba(107,125,143,0.6)',
+      ],
+      borderColor: [
+        'rgba(192,57,43,1)',
+        'rgba(13,31,60,1)',
+        'rgba(44,62,80,1)',
+        'rgba(212,160,23,1)',
+        'rgba(107,125,143,1)',
+      ],
+      borderWidth: 1.5,
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(13,31,60,0.95)',
+        titleColor: '#D4A017',
+        bodyColor: 'rgba(255,255,255,0.8)',
+        padding: 12,
+        borderColor: 'rgba(212,160,23,0.3)',
+        borderWidth: 1,
+        callbacks: {
+          label: ctx => ` ${ctx.parsed.y.toLocaleString()} casos estimados`
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: 'rgba(255,255,255,0.5)',
+          font: { family: "'DM Mono', monospace", size: 9 }
+        },
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        border: { color: 'rgba(255,255,255,0.1)' }
+      },
+      y: {
+        ticks: {
+          color: 'rgba(255,255,255,0.4)',
+          font: { family: "'DM Mono', monospace", size: 9 },
+          callback: v => v.toLocaleString()
+        },
+        grid: { color: 'rgba(255,255,255,0.06)' },
+        border: { color: 'rgba(255,255,255,0.1)' }
+      }
+    }
+  }
+});
+
+/* ── Publication filters ─────────────────────────────────────── */
+const filters = document.querySelectorAll('.pub-filter');
+const pubCards = document.querySelectorAll('.pub-card');
+
+filters.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filters.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    pubCards.forEach(card => {
+      if (f === 'all') {
+        card.style.display = '';
+      } else {
+        const t = card.dataset.type;
+        card.style.display = (t === f) ? '' : 'none';
+      }
+    });
+  });
+});
+
+/* ── Contact form ────────────────────────────────────────────── */
+const form    = document.getElementById('contactForm');
+const success = document.getElementById('form-success');
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const consent = document.getElementById('consent').checked;
+  if (!consent) {
+    alert('Por favor, autorice el uso de la información para continuar.');
+    return;
+  }
+  const btn = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Enviando...';
+  btn.disabled = true;
+  setTimeout(() => {
+    form.querySelectorAll('input:not([type=checkbox]), textarea, select').forEach(el => el.value = '');
+    form.querySelectorAll('input[type=checkbox]').forEach(el => el.checked = false);
+    success.style.display = 'block';
+    btn.textContent = 'Mensaje enviado ✓';
+    btn.style.background = '#1A6B3C';
+  }, 1200);
+});
+
+/* ── Smooth scroll offset for fixed nav ─────────────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    const offset = 80;
+    window.scrollTo({
+      top: target.getBoundingClientRect().top + window.pageYOffset - offset,
+      behavior: 'smooth'
+    });
+  });
+});
+</script>
+
+</body>
+</html>
